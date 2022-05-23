@@ -3,9 +3,9 @@
 namespace CompactNSearch
 {
 #ifdef USE_DOUBLE
-	using Real = double;
+    using Real = double;
 #else
-	using Real = float;
+    using Real = float;
 #endif
 }
 
@@ -13,7 +13,9 @@ namespace CompactNSearch
 #define INITIAL_NUMBER_OF_NEIGHBORS 50
 
 #ifdef _MSC_VER
-	#include <ppl.h>
+#include <ppl.h>
+#elif __APPLE__
+#include <dispatch/dispatch.h>
 #else
-	#include <parallel/algorithm>
+#include <parallel/algorithm>
 #endif

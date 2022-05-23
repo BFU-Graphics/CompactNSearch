@@ -8,6 +8,11 @@ set_property(GLOBAL PROPERTY USE_FOLDERS on)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (APPLE)
+	find_package(OpenMP REQUIRED)
+	link_libraries(OpenMP::OpenMP_CXX)
+endif ()
+
 if (UNIX)
 find_package(OpenMP)
 if (OPENMP_FOUND)

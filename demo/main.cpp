@@ -13,6 +13,22 @@
 
 using namespace CompactNSearch;
 
+#ifdef __APPLE__
+template<typename It, typename F>
+inline void parallel_for_each(It a, It b, F&& f)
+{
+    size_t count = std::distance(a, b);
+    using data_t = std::pair<It, F>;
+    data_t helper = data_t(a, std::forward<F>(f));
+    dispatch_apply_f(count, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &helper, [](void* ctx, size_t cnt)
+    {
+        data_t* d = static_cast<data_t*>(ctx);
+        auto elem_it = std::next(d->first, cnt);
+        (*d).second(*(elem_it));
+    });
+}
+#endif
+
 std::vector<std::array<Real, 3>> positions;
 
 std::size_t const N = 30;
@@ -153,8 +169,10 @@ advect()
 {
 #ifdef _MSC_VER
 	concurrency::parallel_for_each
+#elif __APPLE__
+    parallel_for_each
 #else
-	__gnu_parallel::for_each
+            __gnu_parallel::for_each
 #endif
 	(positions.begin(), positions.end(), [&](std::array<Real, 3>& x)
 	{
